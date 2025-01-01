@@ -2,38 +2,77 @@ dofile("utils.lua")
 
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest", 1)
-
-    gamefont = love.graphics.newFont(20)
+    fontsize20 = love.graphics.newFont(20)
 
     keystring = ""
 
-    soultypes = {
+    soul_tiers = {
         {
-            id = "bat",
-            sprite = "sprites/souls/soul_bat.png",
-            count = 0,
+            id = "desecrated",
+            name = "Desecrated",
+            border = "sprites/souls/border_desecrated.png",
         },
         {
-            id = "fly",
-            sprite = "sprites/souls/soul_fly.png",
-            count = 0,
+            id = "shattered",
+            name = "Shattered",
+            border = "sprites/souls/border_shattered.png",
         },
         {
-            id = "mage",
-            sprite = "sprites/souls/soul_mage.png",
-            count = 0,
+            id = "intact",
+            name = "Intact",
+            border = "sprites/souls/border_intact.png",
         },
         {
-            id = "slimes",
-            sprite = "sprites/souls/soul_slimes.png",
-            count = 0,
+            id = "flawless",
+            name = "Flawless",
+            border = "sprites/souls/border_flawless.png",
         },
         {
-            id = "void",
-            sprite = "sprites/souls/soul_souls_void.png",
-            count = 0,
+            id = "gilded",
+            name = "Gilded",
+            border = "sprites/souls/border_gilded.png",
         },
     }
+
+    local soul_types_tocreate = {
+        {
+            id = "beast",
+            name = "Beast",
+            sprite = "sprites/souls/soul_beast.png",
+        },
+        {
+            id = "plant",
+            name = "Plant",
+            sprite = "sprites/souls/soul_plant.png",
+        },
+        {
+            id = "fungus",
+            name = "Fungus",
+            sprite = "sprites/souls/soul_fungus.png",
+        },
+        {
+            id = "construct",
+            name = "Construct",
+            sprite = "sprites/souls/soul_construct.png",
+        },
+    }
+
+    soul_types = {}
+
+    for i,tier in ipairs(soul_tiers) do
+        for i2,soul in ipairs(soul_types_tocreate) do
+            table.insert(soul_types, {
+                id = tier.id .. "_" .. soul.id,
+                name = tier.name .. " " .. soul.name .. " Soul",
+                soul = soul.id,
+                tier = tier.id,
+                tier_number = i,
+                sprite = soul.sprite,
+                border = tier.border,
+                count = 0,
+            })
+        end
+    end
 end
 
 function love.update(dt)
@@ -43,7 +82,7 @@ end
 
 function love.draw()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.setFont(gamefont)
+    love.graphics.setFont(fontsize20)
     
     love.graphics.print(keystring, 200, 100)
 
@@ -72,22 +111,25 @@ end
 
 function DrawGui()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.setFont(gamefont)
+    love.graphics.setFont(fontsize20)
 
     local centre_x, centre_y = (screen_width / 7) * 5, (screen_height / 6) * 4
-    local inc = (math.pi * 2) / #soultypes
+    local inc = (math.pi * 2) / #soul_types
     local soul_x = 0
     local soul_y = 0
-    local soultypes_todraw = {}
-    for i,soul in ipairs(soultypes) do
+    local soul_types_todraw = {}
+    for i,soul in ipairs(soul_types) do
+---@diagnostic disable-next-line: undefined-field
         if soul.count > 0 then
-            table.insert(soultypes_todraw, soul)
+            table.insert(soul_types_todraw, soul)
         end
     end
-    for i,soul in ipairs(soultypes_todraw) do
-        soul_x = centre_x + math.cos(inc * i) * 80
-        soul_y = centre_y + math.sin(inc * i) * 80
+    for i,soul in ipairs(soul_types_todraw) do
+        soul_x = centre_x + math.cos(inc * i) * 120
+        soul_y = centre_y + math.sin(inc * i) * 120
         local sprite = love.graphics.newImage(soul.sprite)
+        local border = love.graphics.newImage(soul.border)
+        love.graphics.draw(border, soul_x, soul_y, 0, 2, 2)
         love.graphics.draw(sprite, soul_x, soul_y, 0, 2, 2)
         love.graphics.print(soul.count, soul_x + 20, soul_y)
     end

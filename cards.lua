@@ -4,9 +4,10 @@ dofile("utils.lua")
 
 types
 - attack: has a projectile table
-- defense:
+- defense: 
 - self:
-- modifier:
+- modifier: has a modifier table, a func_on_used, and a func_every_frame, use next > 0
+- multicast: use_next > 1
 
 damage types: projectile, slice, fire, poison, electricity
 
@@ -16,28 +17,24 @@ cards_all = {
     {
         id = "bullet",
         name = "Bullet",
-        desc = "Shoot a projectile forward",
+        desc = "Shoot a projectile",
         type = "attack",
+        sprite = "gfx/cards/bullet.png",
         cooldown = 1, -- 1 turn cooldown, cooldowns are reduced at start of turn
+        use_next = 0,
         projectile = {
-            vel_x = 0,
-            vel_y = 100,
-            damage = {
-                projectile = 5,
-            },
+            entity = "projectile_bullet",
+            count = 1,
         },
-        func_init = function(entity_this, entity_played) end,
-        func_on_hit = function(entity_this, entity_hit, entity_played)
-            -- entity_this: this entity
-            -- entity_hit: the hit entity
-            -- entity_played: the entity that played this card
-        end,
-        func_mid_flight = function(entity_this, entity_played) end,
+        func_drawn = function(card) end,
     },
 }
 
-cards_player = {}
+cards_deck_player = {} -- between 10 and 20 cards
+cards_deck_enemy = {}
 
-cards_deck = {} -- up to 30 cards
+cards_hand_player = {} -- 5 cards
+cards_hand_enemy = {}
 
-cards_hand = {} -- 5 cards
+cards_barrel_player = {} -- up to 5, this is what gets 'shot' at the end of the turn
+cards_barrel_enemy = {}

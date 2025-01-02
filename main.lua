@@ -102,16 +102,25 @@ function love.update(dt)
     mouse_x, mouse_y = love.mouse.getPosition()
     screen_width = love.graphics.getWidth()
     screen_height = love.graphics.getHeight()
-
     for i,entity in ipairs(entities_loaded) do
         local continue = true
         if paused and not EntityHasTag(entity.eid, "pause_exempt") then
             continue = false
         end
         if continue then
-            entity.func_every_frame(entity)
+            if entity.func_every_frame ~= nil then
+                entity.func_every_frame(entity)
+            end
             local sprite_width = entity.sprite.width * entity.pos.scale_x
             local sprite_height = entity.sprite.height * entity.pos.scale_y
+            if entity.hp ~= nil then
+                if entity.hp < 0 then
+                    if entity.func_on_death ~= nil then
+                        entity.func_on_death(entity)
+                    end
+                    EntityKill(entity.eid)
+                end
+            end
             if entity.hitbox_radius ~= nil then
                 if DistanceBetween(mouse_x, mouse_y, entity.pos.x + (sprite_width / 2), entity.pos.y + (sprite_height / 2)) <= (entity.hitbox_radius * entity.pos.scale) then
                     entity.func_on_hover(entity)
@@ -126,6 +135,12 @@ function love.update(dt)
                 else
                     entity.colliding_with_mouse = false
                 end
+            end
+            if entity.velocity.x ~= 0 then
+                entity.pos.x = entity.pos.x + entity.velocity.x
+            end
+            if entity.velocity.y ~= 0 then
+                entity.pos.y = entity.pos.y + entity.velocity.y
             end
         end
     end
@@ -229,7 +244,7 @@ function love.draw()
     end
 
     love.graphics.setColor(0, 1, 0)
-    love.graphics.print("Current FPS: " .. tostring(love.timer.getFPS()) .. ". Game state: " .. game_state .. ".", 10, 10)
+    love.graphics.print("Current FPS: " .. tostring(love.timer.getFPS()) .. ". Game state: " .. game_state .. ". Number of entities loaded: " .. tostring(#entities_loaded) .. ".", 10, 10)
     love.graphics.setColor(1, 1, 1)
     love.graphics.print(keystring, 200, 100)
 end
@@ -264,5 +279,10 @@ function love.keypressed(key, scancode, isrepeat)
     keystring = key
     if key == "escape" then
         paused = not paused
+    end
+    if key == "w" then
+        local proj = EntityLoad("projectile_bullet", screen_width / 2, (screen_height / 8) * 7)
+---@diagnostic disable-next-line: undefined-field
+        proj.velocity.y = math.abs(proj.velocity.y) * -1
     end
 end

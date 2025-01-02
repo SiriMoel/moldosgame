@@ -2,6 +2,17 @@ function DistanceBetween(x1, y1, x2, y2)
     return math.sqrt(((x2 - x1)^2) + ((y2 - y1)^2))
 end
 
+function IsCoordsOnScreen(x, y)
+    local screen_left = 0
+    local screen_top = 0
+    local screen_bottom = screen_top + love.graphics.getHeight()
+    local screen_right = screen_left + love.graphics.getWidth()
+    if x > screen_left and x < screen_right and y > screen_top and y < screen_bottom then
+        return true
+    end
+    return false
+end
+
 function table.contains(table, element)
     for _, value in pairs(table) do
         if value == element then
@@ -42,8 +53,9 @@ end
 function EntityKill(eid)
     for i,entity in ipairs(entities_loaded) do
         if entity.eid == eid then
-            table.remove(entities_loaded, i)
+            entities_loaded[i] = nil
             entity = nil
+            table.remove(entities_loaded, i)
             break
         end
     end
@@ -55,6 +67,16 @@ function EntityHasTag(eid, tag)
     else
         return false
     end
+end
+
+function EntityGetAllWithTag(tag)
+    local targets = {}
+    for i,entity in ipairs(entities_loaded) do
+        if EntityHasTag(entity.eid, tag) then
+            table.insert(targets, entity)
+        end
+    end
+    return targets
 end
 
 function UpdateGameState(state)

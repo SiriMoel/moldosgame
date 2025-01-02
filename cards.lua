@@ -38,6 +38,6 @@ cards_all = {
 
 cards_player = {}
 
-cards_deck = {}
+cards_deck = {} -- up to 30 cards
 
-cards_hand = {}
+cards_hand = {} -- 5 cards

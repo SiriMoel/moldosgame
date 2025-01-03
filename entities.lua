@@ -51,6 +51,49 @@ entities = {
     },
     {
         eid = nil,
+        id = "gui_text_battle",
+        name = "",
+        hp = nil,
+        tags = { "gui", "render_shape_on_hover", },
+        sprite = {
+            file = "gfx/gui/text_battle.png",
+            width = 24,
+            height = 24,
+        },
+        hitbox_radius = 11,
+        --[[hitbox = {
+            w = 10,
+            h = 10,
+        },]]
+        pos = {
+            x = nil,
+            y = nil,
+            r = 0,
+            scale = 4,
+            scale_x = 4,
+            scale_y = 4,
+        },
+        velocity = {
+            x = 0,
+            y = 0,
+        },
+        colliding_with_mouse = false,
+        func_on_hover = function(entity)
+            
+        end,
+        func_on_click = function(entity, button)
+            if button == 1 then
+                UpdateGameState("in_round")
+                BeginRound()
+            end
+        end,
+        func_every_frame = function(entity)
+            entity.pos.x = (screen_width / 5)
+            entity.pos.y = (screen_height / 8) * 5
+        end,
+    },
+    {
+        eid = nil,
         id = "player_soul",
         name = "Player Soul",
         hp = 100,
@@ -60,7 +103,7 @@ entities = {
             width = 30,
             height = 30,
         },
-        hitbox_radius = 50,
+        hitbox_radius = 30,
         pos = {
             x = nil,
             y = nil,
@@ -82,7 +125,48 @@ entities = {
 
         end,
         func_every_frame = function(entity)
-            
+            entity.pos.x = screen_width / 2
+            entity.pos.y = (screen_height / 7) * 6
+        end,
+        func_on_death = function(entity)
+
+        end,
+    },
+    {
+        eid = nil,
+        id = "enemy_soul",
+        name = "Enemy Soul",
+        hp = 1,
+        tags = { "enemy_soul", "game_target", "render_shape_on_hover" },
+        sprite = {
+            file = "gfx/entities/enemy_soul.png",
+            width = 30,
+            height = 30,
+        },
+        hitbox_radius = 30,
+        pos = {
+            x = nil,
+            y = nil,
+            r = 0,
+            scale = 4,
+            scale_x = 4,
+            scale_y = 4,
+        },
+        velocity = {
+            x = 0,
+            y = 0,
+        },
+        colliding_with_mouse = false,
+        func_on_hover = function(entity)
+            --EntityLoad(entity.id, entity.pos.x + 60, entity.pos.y)
+            --EntityKill(entity.eid)
+        end,
+        func_on_click = function(entity, button)
+
+        end,
+        func_every_frame = function(entity)
+            entity.pos.x = screen_width / 2
+            entity.pos.y = (screen_height / 9)
         end,
         func_on_death = function(entity)
 
@@ -130,8 +214,11 @@ entities = {
             end
             for i,target in ipairs(EntityGetAllWithTag("game_target")) do
                 if DistanceBetween(entity.pos.x, entity.pos.y, target.pos.x, target.pos.y) <= target.hitbox_radius then
-                    for i,damage in ipairs(entity.proj.damage_types) do
+                    keystring = "moldos"
+                    for i=1,#entity.proj.damage_types do
+                        local damage = entity.proj.damage_types[i]
                         target.hp = target.hp - damage
+                        EntityKill(entity.eid)
                     end
                 end
             end

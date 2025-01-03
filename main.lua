@@ -108,6 +108,13 @@ function love.update(dt)
             continue = false
         end
         if continue then
+            --[[if entity.remove ~= nil and entity.remove == true then
+                entities_loaded[i] = nil
+                --entity = nil
+                table.remove(entities_loaded, i)
+                entity.remove = false
+                return
+            end]]
             if entity.func_every_frame ~= nil then
                 entity.func_every_frame(entity)
             end
@@ -213,7 +220,12 @@ function love.draw()
     end
 
     if game_state == "in_round" then
-        
+        local background = love.graphics.newImage("gfx/gui/background_in_round.png")
+        for i=0, screen_width / background:getWidth() do
+            for j=0, screen_height / background:getHeight() do
+                love.graphics.draw(background, i * background:getWidth(), j * background:getHeight())
+            end
+        end
     end
 
     for i,entity in ipairs(entities_loaded) do
@@ -281,7 +293,7 @@ function love.keypressed(key, scancode, isrepeat)
         paused = not paused
     end
     if key == "w" then
-        local proj = EntityLoad("projectile_bullet", screen_width / 2, (screen_height / 8) * 7)
+        local proj = EntityLoad("projectile_bullet", (screen_width / 20) * 11, (screen_height / 8) * 7)
 ---@diagnostic disable-next-line: undefined-field
         proj.velocity.y = math.abs(proj.velocity.y) * -1
     end

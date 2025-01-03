@@ -53,6 +53,7 @@ end
 function EntityKill(eid)
     for i,entity in ipairs(entities_loaded) do
         if entity.eid == eid then
+            entity.remove = true
             entities_loaded[i] = nil
             entity = nil
             table.remove(entities_loaded, i)
@@ -89,12 +90,17 @@ function UpdateGameState(state)
     end
 
     if game_state == "main" then
-
+        entity_start_round_text = EntityLoad("gui_text_battle", 0, 0)
     end
 
     if game_state == "in_round" then
         
     end
+end
+
+function BeginRound()
+    player_soul = EntityLoad("player_soul", screen_width / 2, (screen_height / 7) * 5)
+    enemy_soul = EntityLoad("enemy_soul", screen_width / 2, (screen_height / 9))
 end
 
 function GetSoulsCount(type, tier_number) -- is this even necessary

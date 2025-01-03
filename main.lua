@@ -1,8 +1,6 @@
 dofile("utils.lua")
-
 dofile("cards.lua")
 dofile("entities.lua")
-
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest", 1)
 

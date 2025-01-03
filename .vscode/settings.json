@@ -1,6 +1,13 @@
 {
     "Lua.diagnostics.disable": [
         "lowercase-global",
-        "undefined-global"
-    ]
+    ],
+    "Lua.workspace.library": [
+        "${addons}/love2d/module/library"
+    ],
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.runtime.special": {
+        "love.filesystem.load": "loadfile"
+    },
+    "Lua.workspace.checkThirdParty": false
 }

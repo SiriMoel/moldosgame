@@ -291,8 +291,6 @@ function love.keypressed(key, scancode, isrepeat)
         paused = not paused
     end
     if key == "w" then
-        local proj = EntityLoad("projectile_bullet", (screen_width / 20) * 11, (screen_height / 8) * 7)
----@diagnostic disable-next-line: undefined-field
-        proj.velocity.y = math.abs(proj.velocity.y) * -1
+        local proj = ShootProjectile("projectile_bullet", EntityGetAllWithTag("player_soul")[1], (screen_width / 20) * 11, (screen_height / 8) * 7, 1, -1, "bottom")
     end
 end

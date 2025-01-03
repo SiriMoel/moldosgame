@@ -198,6 +198,7 @@ entities = {
         },
         colliding_with_mouse = false,
         proj = {
+            eid_who_shot = nil,
             damage_types = {
                 projectile = 5,
             }
@@ -209,16 +210,21 @@ entities = {
 
         end,
         func_every_frame = function(entity)
+            keystring = EntityGet(entity.proj.eid_who_shot).name
             if not IsCoordsOnScreen(entity.pos.x, entity.pos.y) then
                 EntityKill(entity.eid)
             end
-            for i,target in ipairs(EntityGetAllWithTag("game_target")) do
-                if DistanceBetween(entity.pos.x, entity.pos.y, target.pos.x, target.pos.y) <= target.hitbox_radius then
-                    keystring = "moldos"
-                    for i=1,#entity.proj.damage_types do
-                        local damage = entity.proj.damage_types[i]
-                        target.hp = target.hp - damage
-                        EntityKill(entity.eid)
+            local targets = EntityGetAllWithTag("game_target")
+            for i=1,#targets do
+                local target = targets[i]
+                if entity.proj.entity_who_shot ~= target.eid then
+                    if DistanceBetween(entity.pos.x, entity.pos.y, target.pos.x, target.pos.y) <= (target.hitbox_radius * target.pos.scale) then
+                        keystring = tostring(target.hp)
+                        for i=1,#entity.proj.damage_types do
+                            local damage = entity.proj.damage_types[i]
+                            target.hp = target.hp - damage
+                            EntityKill(entity.eid)
+                        end
                     end
                 end
             end

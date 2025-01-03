@@ -73,7 +73,7 @@ end
 function EntityGetAllWithTag(tag)
     local targets = {}
     for i,entity in ipairs(entities_loaded) do
-        if EntityHasTag(entity.eid, tag) then
+        if table.contains(entity.tags, tag) then
             table.insert(targets, entity)
         end
     end
@@ -101,6 +101,19 @@ end
 function BeginRound()
     player_soul = EntityLoad("player_soul", screen_width / 2, (screen_height / 7) * 5)
     enemy_soul = EntityLoad("enemy_soul", screen_width / 2, (screen_height / 9))
+end
+
+function ShootProjectile(projectile_entity, eid_who_shot, x, y, vel_x_mult, vel_y_mult, shoot_location)
+    local proj = EntityLoad(projectile_entity, x, y)
+    proj.proj.entity_who_shot = eid_who_shot
+    proj.velocity.x = proj.velocity.x * vel_x_mult
+    proj.velocity.y = proj.velocity.y * vel_y_mult
+    if shoot_location == "bottom" then
+        proj.velocity.y = math.abs(proj.velocity.y) * -1
+    end
+    if shoot_location == "top" then
+        proj.velocity.y = math.abs(proj.velocity.y)
+    end
 end
 
 function GetSoulsCount(type, tier_number) -- is this even necessary
